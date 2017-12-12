@@ -1,0 +1,40 @@
+create table tbl_rawGPPracticePop(GPPracCode VARCHAR(10), 
+CCGCode VARCHAR(5), NHSAreaTeamCode VARCHAR(5), NHSRegionCode VARCHAR(5), 
+TotalPop INTEGER, TotalMale INTEGER, TotalFemale INTEGER, 
+Male0to4 INTEGER, Male5to9 INTEGER, Male10to14 INTEGER, 
+Male15to19 INTEGER, Male20to24 INTEGER, Male25to29 INTEGER, 
+Male30to34 INTEGER, Male35to39 INTEGER, Male40to44 INTEGER, 
+Male45to49 INTEGER, Male50to54 INTEGER, Male55to59 INTEGER, 
+Male60to64 INTEGER, Male65to69 INTEGER, Male70to74 INTEGER, 
+Male75to79 INTEGER, Male80to84 INTEGER, Male85over INTEGER,  
+Female0to4 INTEGER, Female5to9 INTEGER, Female10to14 INTEGER, 
+Female15to19 INTEGER, Female20to24 INTEGER, Female25to29 INTEGER, 
+Female30to34 INTEGER, Female35to39 INTEGER, Female40to44 INTEGER, 
+Female45to49 INTEGER, Female50to54 INTEGER, Female55to59 INTEGER, 
+Female60to64 INTEGER, Female65to69 INTEGER, Female70to74 INTEGER, 
+Female75to79 INTEGER, Female80to84 INTEGER, Female85over INTEGER);
+
+Alter table tbl_rawGPPracticePop add column PctPopOver65 NUMERIC(3,2);
+
+
+
+create table tbl_rawGPPrescribeData(SHArea VARCHAR(10),
+ PCTrust VARCHAR(10), GPPracCode VARCHAR(10),
+ BNFCode VARCHAR(30), BNFName VARCHAR(100),
+ NumItems INTEGER, NICost NUMERIC(8,2),
+ ActCost NUMERIC(8,2), Period VARCHAR(10));
+
+
+create table tbl_idGPPrescribeData( rownum MEDIUMINT NOT NULL AUTO_INCREMENT,
+ SHArea VARCHAR(10), PCTrust VARCHAR(10),
+ GPPracCode VARCHAR(10), BNFCode VARCHAR(30),
+ BNFName VARCHAR(100), NumItems INTEGER,
+ NICost NUMERIC(8,2), ActCost NUMERIC(8,2),
+ Period VARCHAR(10), PRIMARY KEY (rownum));
+
+create or replace view vw_rawGPPracticeScriptData as SELECT S.rownum, 
+P.GPPracCode, P.TotalPop, P.NHSRegionCode, 
+S.SHArea, S.BNFCode, S.BNFName, S.NumItems, 
+S.NICost, S.ActCost,  P.PctPopOver65 
+FROM tbl_rawGPPracticePop P, tbl_idGPPrescribeData S 
+WHERE P.GPPracCode=S.GPPracCode;
